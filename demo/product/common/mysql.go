@@ -3,6 +3,8 @@ package common
 import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
+	"log"
+	"strconv"
 )
 
 // NewMysqlConn 创建mysql 连接
@@ -29,7 +31,14 @@ func GetResultRow(rows *sql.Rows) map[string]string{
 		for i, v := range values {
 			if v != nil {
 				//fmt.Println(reflect.TypeOf(col))
-				record[columns[i]] = string(v.([]byte))
+				switch v.(type) {
+				case int64:
+					record[columns[i]] = strconv.FormatInt(v.(int64), 10)
+				case []byte:
+					record[columns[i]] = string(v.([]byte))
+				default:
+					log.Fatal("GetResultRow: undefined situation")
+				}
 			}
 		}
 	}

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/kataras/iris/v12/v12"
-	"github.com/kataras/iris/v12/v12/mvc"
+	"github.com/kataras/iris/v12"
+	"github.com/kataras/iris/v12/mvc"
 	"github.com/l1nkkk/shopSystem/demo/irisdemo/web/controllers"
 )
 func main()  {

@@ -38,7 +38,7 @@ func (o *OrderMangerRepository) Conn() error {
 		o.mysqlConn = mysql
 	}
 	if o.table == "" {
-		o.table = "order"
+		o.table = "orders"
 	}
 	return nil
 }
@@ -51,7 +51,8 @@ func (o *OrderMangerRepository) Insert(order *datamodels.Order) (productID int64
 	}
 
 	// 2. 准备sql
-	sql := "INSERT " + o.table + " set userID=?,productID=?,orderStatus=?"
+	//sql := "INSERT product SET productName=?,productNum=?,productImage=?,productUrl=?"
+	sql := "INSERT " + o.table + " SET userID=?,productID=?,orderStatus=?"
 	stmt, errStmt := o.mysqlConn.Prepare(sql)
 	if errStmt != nil {
 		return productID, errStmt

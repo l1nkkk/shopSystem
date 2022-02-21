@@ -49,7 +49,7 @@ func main() {
 	defer cancel()
 
 	// l1nkkk: productSerivce 和 ProductController 怎么建立联系的，这里有点抽象
-	// 5. 注册控制器
+	// 5-1. 注册控制器——product
 	// model
 	productRepository := repositories.NewProductManager("product", db)
 	productSerivce := services.NewProductService(productRepository)
@@ -57,6 +57,14 @@ func main() {
 	product := mvc.New(productParty)      // mvc 对象
 	product.Register(ctx, productSerivce) // 注册model（service）
 	product.Handle(new(controllers.ProductController))	// 注册controller
+
+	// 5-2. 注册控制器——Order
+	orderRepository := repositories.NewOrderMangerRepository("order",db)
+	orderService := services.NewOrderService(orderRepository)
+	orderParty := app.Party("/order")// 将该前缀的url都定位到该controller
+	order := mvc.New(orderParty)
+	order.Register(ctx,orderService)	// 对应了 OrderController 的成员
+	order.Handle(new(controllers.OrderController))
 
 	// 6.启动服务
 	app.Run(
