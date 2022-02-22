@@ -1,11 +1,12 @@
 package controllers
 
 import (
+	"fmt"
+	"github.com/l1nkkk/shopSystem/demo/productOptim/encrypt"
 	"strconv"
 
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
-	"github.com/kataras/iris/v12/sessions"
 	"github.com/l1nkkk/shopSystem/demo/productOptim/datamodels"
 	"github.com/l1nkkk/shopSystem/demo/productOptim/services"
 	"github.com/l1nkkk/shopSystem/demo/productOptim/tool"
@@ -14,7 +15,7 @@ import (
 type UserController struct {
 	Ctx     iris.Context
 	Service services.IUserService
-	Session *sessions.Session
+	//Session *sessions.Session
 }
 
 // GetRegister 返回 Register 页面；GET /user/register
@@ -60,7 +61,7 @@ func (c *UserController) GetLogin() mvc.View {
 
 // PostLogin 处理登录信息表单；POST /user/login
 func (c *UserController) PostLogin() mvc.Response {
-	//1.获取用户提交的表单信息
+	// 1.获取用户提交的表单信息
 	var (
 		userName = c.Ctx.FormValue("userName")
 		password = c.Ctx.FormValue("password")
@@ -75,9 +76,19 @@ func (c *UserController) PostLogin() mvc.Response {
 
 	// 3、写入用户ID到cookie中
 	tool.GlobalCookie(c.Ctx, "uid", strconv.FormatInt(user.ID, 10))
-	c.Session.Set("userID", strconv.FormatInt(user.ID, 10))
+	uidByte := []byte(strconv.FormatInt(user.ID, 10))
+	uidString, err := encrypt.EnPwdCode(uidByte)
+	if err != nil {
+		fmt.Println(err)
+	}
 
-	// 重定向到商品信息页面
+	// 3、写入用户ID到cookie中
+	//tool.GlobalCookie(c.Ctx, "uid", strconv.FormatInt(user.ID, 10))
+	//c.Session.Set("userID",strconv.FormatInt(user.ID,10))
+
+	// 4.写入用户浏览器
+	tool.GlobalCookie(c.Ctx, "sign", uidString)
+
 	return mvc.Response{
 		Path: "/product/",
 	}

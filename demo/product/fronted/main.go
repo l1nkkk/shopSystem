@@ -4,14 +4,14 @@ import (
 	"context"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
+	"github.com/kataras/iris/v12/sessions"
 	"github.com/l1nkkk/shopSystem/demo/product/common"
 	"github.com/l1nkkk/shopSystem/demo/product/fronted/middleware"
+	"time"
 
-	"github.com/kataras/iris/v12/sessions"
 	"github.com/l1nkkk/shopSystem/demo/product/fronted/web/controllers"
 	"github.com/l1nkkk/shopSystem/demo/product/repositories"
 	"github.com/l1nkkk/shopSystem/demo/product/services"
-	"time"
 )
 
 func main() {
@@ -43,7 +43,8 @@ func main() {
 
 	}
 
-	// 7.创建session
+	// l1nkkk: 登录优化
+	//7.创建session
 	sess := sessions.New(sessions.Config{
 		Cookie:"AdminCookie",		// cookie名称
 		Expires:600*time.Minute,	// 过期时间
@@ -56,6 +57,7 @@ func main() {
 	userService := services.NewService(user)
 	userPro := mvc.New(app.Party("/user"))
 	userPro.Register(userService, ctx,sess.Start)
+	//userPro.Register(userService, ctx)
 	userPro.Handle(new(controllers.UserController))
 
 	product := repositories.NewProductManager("product", db)

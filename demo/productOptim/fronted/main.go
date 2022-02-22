@@ -8,9 +8,6 @@ import (
 	"github.com/l1nkkk/shopSystem/demo/productOptim/common"
 	"github.com/l1nkkk/shopSystem/demo/productOptim/fronted/middleware"
 
-	"time"
-
-	"github.com/kataras/iris/v12/sessions"
 	"github.com/l1nkkk/shopSystem/demo/productOptim/fronted/web/controllers"
 	"github.com/l1nkkk/shopSystem/demo/productOptim/repositories"
 	"github.com/l1nkkk/shopSystem/demo/productOptim/services"
@@ -47,11 +44,12 @@ func main() {
 
 	}
 
+	// l1nkkk: 登录优化
 	// 7.创建session
-	sess := sessions.New(sessions.Config{
-		Cookie:  "AdminCookie",     // cookie名称
-		Expires: 600 * time.Minute, // 过期时间
-	})
+	//sess := sessions.New(sessions.Config{
+	//	Cookie:  "AdminCookie",     // cookie名称
+	//	Expires: 600 * time.Minute, // 过期时间
+	//})
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -59,7 +57,8 @@ func main() {
 	user := repositories.NewUserRepository("user", db)
 	userService := services.NewService(user)
 	userPro := mvc.New(app.Party("/user"))
-	userPro.Register(userService, ctx, sess.Start)
+	//userPro.Register(userService, ctx, sess.Start)
+	userPro.Register(userService, ctx)
 	userPro.Handle(new(controllers.UserController))
 
 	product := repositories.NewProductManager("product", db)
